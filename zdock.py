@@ -32,7 +32,6 @@ class Zdock:
             _description_
         """        
         receptor = self._mark_sur(receptor)
-        ligands = [self._mark_sur(ligand) for ligand in ligands]
         return [self._dock(receptor, ligand) for ligand in ligands]
     
     def _dock(self, receptor, ligand) -> str:
@@ -47,20 +46,22 @@ class Zdock:
         ---------
         str : output file name
         """  
-        receptor = self._mark_sur(receptor)
         ligand = self._mark_sur(ligand)
-        basename = utils.basename(receptor)
+        basename = utils.basename(ligand)
         outfile = f'{basename}_zdock.out'
         cmd = [f'{self.binary_path}/zdock', '-R', receptor,
                '-L', ligand, '-o', outfile ]   
         logging.info('Launching subprocess zdock "%s"'%(' '.join(cmd))) 
         process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        
         with utils.timing('Zdock'):
-            stdout, stderr = process.communicate()
+            stdout, stderr = process.communicate()   
             retcode = process.wait()
             logging.info('Zdock finished')
         if retcode:
-            raise RuntimeError('Zdock failed "%s"'%stderr.decode('utf-8'))
+            # raise RuntimeError('Zdock failed "%s": "%s"'%(stderr.decode('utf-8'), ' '.join(cmd)))
+            print('Out : %s '% stdout.decode('utf-8'))
+            pass
         return outfile
         
     def _mark_sur(self, receptor) -> str:

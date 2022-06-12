@@ -103,7 +103,7 @@ class ChainSelect(PDB.Select):
         """
         Determine whether to remove hydrogen atoms
         """        
-        if self.flags.ignore_H and atom.get_name() == 'H':
+        if self.flags.ignore_H and atom.element == 'H':
             return False
         else:
             return True

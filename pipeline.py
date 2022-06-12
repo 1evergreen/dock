@@ -18,6 +18,7 @@ class DataPipeline:
         # self.binary = binary  # zdock binary path
         self.zdock = Zdock(flags.binary)
         self._get_complex()
+        assert len(self.complexes) > 0, 'No Target complexes'
 
     def process(self):
         antibodies:list = self._get_antibody()
@@ -30,9 +31,9 @@ class DataPipeline:
     
 
     def _get_complex(self):
-        logging.info('Parsing target complex pdb files...')
+        logging.info(f'Parsing target complex pdb files from {self.path}...')
         self.complexes = parse_files.parse(self.path, self.pattern)
-        logging.info('Found target complexes: ', '\n'.join(self.complexes))
+        logging.info('Found target complexes: \n%s'%'\n'.join(self.complexes))
         
     def _get_antibody(self):
         """get all antibody parts in the list
@@ -49,7 +50,7 @@ class DataPipeline:
             try:
                 antibody = split.parse_ab(path, self.flags)
                 antibodys.append(antibody)
-                logging.info(f'Parse antibody successfully : f{antibody}')
+                logging.info(f'Parse antibody successfully : {antibody}')
             except IOError:
                 print(f'No such pdb file : {path}')
         return antibodys
