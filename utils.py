@@ -27,6 +27,8 @@ def tmpdir_manager(base_dir : Optional[str] = None):
 
 
 def basename(pdb_file: str) -> str:
+    '''Get the abspath basename 
+    '''
     return os.path.abspath(pdb_file).rsplit('.', 1)[0]
 
 

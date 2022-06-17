@@ -16,6 +16,7 @@ flags.DEFINE_bool('ignore_H', default=True, help='Whether to remove hydrogen')
 flags.DEFINE_bool('ignore_water', default=True, help='Whether to remove water in the structure')
 #TODO flags.DEFINE_bool('ignore_nonstandard', default=False, help='Whether to remove non-standard amino acids')
 flags.DEFINE_string('mode', 'all', 'dock or analysis')
+flags.DEFINE_bool('block', default=False, help='Whether to block the antigen')
 FLAGS = flags.FLAGS
 
 def main(argv):

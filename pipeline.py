@@ -1,9 +1,11 @@
 import utils
 from binary import Zdock, Zrank, Hydration
+from .scripts import block
 import pdb_tool
 import parse_files
 import os
 from absl import logging, flags
+
 
 flags.DEFINE_integer('endnum', 10, 'zrank ending number')
 
@@ -25,6 +27,10 @@ class DockPipeline:
     def process(self):
         antibodies:list = self._get_antibody()
         antigen:str = self._get_antigen()
+        if self.flags.block:  # block the antigen
+            self.flags.input = antigen
+            self.flags.output = antigen
+            antigen = self._block()  #blocked antigen file pdb
         return self.zdock.do_dock(antigen, antibodies)
     
     @property
@@ -48,22 +54,25 @@ class DockPipeline:
         logging.info('Split antibodies from target complex pdb files...')
         antibodys = [] # a list to store the antibodys
         for complex in self.complexes:
-            path = os.path.join(self.basedir, complex) # file abspath
             try:
-                antibody = pdb_tool.parse_ab(path, self.flags)
+                antibody = pdb_tool.parse_ab(complex, self.flags)
                 antibodys.append(antibody)
                 logging.info(f'Parse antibody successfully : {antibody}')
             except IOError:
-                print(f'No such pdb file : {path}')
+                print(f'No such pdb file : {complex}')
         return antibodys
     
     def _get_antigen(self):
         # ab_list = self._get_complex()
-        path = os.path.join(self.basedir, self.complexes[0])
-        antigen = pdb_tool.parse_antigen(path, self.flags)
+        path = self.complexes[0]
+        antigen = pdb_tool.parse_antigen(path, self.flags)  # abs path 
         logging.info(f'Parse antigen successfully : f{antigen}')
         return antigen
         
+    def _block(self):
+        '''Block the antigen'''
+        logging.info(f'Start Blocking antigen files {self.flags.input}')
+        return block.block(self.flags)
             
 class ZRankPipeline:
     '''The zrank analysis pipeline'''

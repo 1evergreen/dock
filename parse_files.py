@@ -28,11 +28,12 @@ def parse_zdock_out(path: str):
     return parse_pattern(path, pattern)
 
 def parse_pattern(path: str, pattern):
+    #return file path and names
     files = os.listdir(path)
     logging.info(f'Parsing files that matches {pattern}')
-    return [file for file in files if os.path.isfile(os.path.join(path, file)) \
+    files = [file for file in files if os.path.isfile(os.path.join(path, file)) \
          and re.match(pattern, file)]
-
+    return [os.path.join(path, file) for file in files]
 
 def get_names(filename):
     """get the zdock out pdbs: antigen and antibody
